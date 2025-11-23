@@ -6,6 +6,7 @@ from .constants import mail_regex,pass_regex
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.db.models import F
 import json
 
 max_image = 1
@@ -138,6 +139,8 @@ def profile(request):
     if request.method == 'GET':
         if request.user.is_authenticated: 
             if request.user.role.id == 25:
+                userdata = patient.objects.values(status = F('current_status'))
+                print(userdata)
                 user = patient.objects.select_related('user').filter(user = request.user)[0]
                 data = {
                     'first_name' : user.user.first_name,
@@ -150,9 +153,14 @@ def profile(request):
                     'height' : user.height,
                     'weight' : user.weight,
                     'blood_group' : user.blood_group.name,
-                    'medical_history' : user.medical_history
+                    'medical_history' : user.medical_history,
+                    'role' : request.user.role.name
                 }
             elif request.user.role.id == 26:
+                userdata = patient.objects.values(status = F('current_status'))
+                print(userdata)
+                # userdata = doctor.objects.annotate(status = basemodel.Status(F('current_status')).label).values()
+                # print(userdata)
                 user = doctor.objects.select_related('user').filter(user = request.user)[0]
                 data = {
                     'first_name' : user.user.first_name,
@@ -165,6 +173,7 @@ def profile(request):
                     'specialization' : user.specialization.name,
                     'qualifications' : user.qualifications.name,
                     'experience' : user.experience,
+                    'role' : request.user.role.name
                 }
             elif request.user.role.id == 27:
                 user = patient.objects.select_related('user').filter(user = request.user)
