@@ -2,7 +2,7 @@ from django.db import models
 from enum import Enum
 from authentication.models import *
 
-class appointments(models.Model):
+class Appointments(models.Model):
     patient = models.ForeignKey(patient, on_delete=models.DO_NOTHING, null=True, related_name='patient')
     doctor = models.ForeignKey(doctor, on_delete=models.DO_NOTHING, related_name='doctor')
     appointment_date = models.DateField()

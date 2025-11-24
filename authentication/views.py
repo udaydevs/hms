@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .models import *
 from .functions import check_regex
@@ -6,10 +7,11 @@ from .constants import mail_regex,pass_regex
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from django.db.models import F
+from django.db.models import F,Q
 import json
 
 max_image = 1
+min_value = 1
 contentType = ['image/png','image/jpeg','image/jpg', 'image/webp']
 
 def signUp(request):
@@ -47,10 +49,13 @@ def signUp(request):
         user.birth_date = dob
         user.address = address
         user.phone_no = phone_no
-        user.gender = dropDown.objects.get(parent = 1, key = gender)
+        user.gender = dropDown.objects.get(id = gender)
+    
         user.profile_photo = profile_photo
         if user_type == 'patient':
-            user.role = dropDown.objects.get(parent = 5, key = 'Pat')
+            user.role = get_object_or_404(dropDown, id = 25)
+            if int(data.get('height')) < min_value or int(data.get('weight')) < min_value:
+                return JsonResponse({'error' : 'Height or weight should be a positive value'}, status = 400)  
             height = data.get('height')
             weight = data.get('weight')
             blood_group = data.get('blood_group')
@@ -60,7 +65,7 @@ def signUp(request):
                 user= user, 
                 height = height, 
                 weight = weight,
-                blood_group = dropDown.objects.get(parent = 2, key = blood_group)
+                blood_group = get_object_or_404(dropDown,id = blood_group)
             )
             if medical_history:
                 patient_data.medical_history = medical_history
@@ -73,7 +78,7 @@ def signUp(request):
             )
             return JsonResponse({'msg' : 'Patient registered successfully'}, status = 201)
         elif user_type == 'doctor':
-            user.role = dropDown.objects.get(parent = 5, key = 'Doc')
+            user.role = get_object_or_404(dropDown ,id = 26)
             specialization = data.get('specialization')
             qualification= data.get('qualification')
             experience = data.get('experience')
@@ -81,8 +86,8 @@ def signUp(request):
 
             doctor.objects.create(
                 user = user, 
-                specialization = dropDown.objects.get(parent = 3, key = specialization), 
-                qualifications = dropDown.objects.get(parent = 4, key = qualification), 
+                specialization = get_object_or_404(dropDown ,id = specialization), 
+                qualifications = get_object_or_404(dropDown,id = qualification), 
                 experience = experience 
             )
             data = render_to_string('doctor_reg.html',{'first_name' : first_name})
@@ -101,8 +106,6 @@ def signIn(request):
         data = json.loads(request.body)
         if ('email' not in (data.keys()) or 'password' not in (data.keys())):
             return JsonResponse({"error" : "Please give me all the required fields"}, status = 400)
-        if request.user.is_authenticated:
-            return JsonResponse({"error":"Already Logged In "}, status = 400) 
         user = authenticate(request, email = data.get('email') , password = data.get('password'))
         if user is not None: 
             login(request,user)   
@@ -139,8 +142,8 @@ def profile(request):
     if request.method == 'GET':
         if request.user.is_authenticated: 
             if request.user.role.id == 25:
-                userdata = patient.objects.values(status = F('current_status'))
-                print(userdata)
+                # userdata = patient.objects.values(status = F('current_status'))
+                # print(userdata)
                 user = patient.objects.select_related('user').filter(user = request.user)[0]
                 data = {
                     'first_name' : user.user.first_name,
@@ -157,8 +160,8 @@ def profile(request):
                     'role' : request.user.role.name
                 }
             elif request.user.role.id == 26:
-                userdata = patient.objects.values(status = F('current_status'))
-                print(userdata)
+                # userdata = patient.objects.values(status = F('current_status'))
+                # print(userdata)
                 # userdata = doctor.objects.annotate(status = basemodel.Status(F('current_status')).label).values()
                 # print(userdata)
                 user = doctor.objects.select_related('user').filter(user = request.user)[0]
