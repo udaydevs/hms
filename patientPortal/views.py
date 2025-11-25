@@ -19,7 +19,7 @@ def doctors(request):
             specializations = F('specialization__name')
         ).values('id', 'first_name', 'last_name', 'specializations')
         return JsonResponse(list(doctors_list),safe=False, status = 200)
-    else:return JsonResponse({'error' : 'Invalid request method'}, status = 405)
+    else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
         
 def bookAppointment(request):
     if request.method == 'POST':
@@ -59,6 +59,6 @@ def bookAppointment(request):
             appointments_data = Appointments.objects.annotate(status = F('appointment_status__name')).filter(patient__user = request.user.id).values()                
             return JsonResponse(list(appointments_data),safe=False, status = 200)
         else:return JsonResponse({'error' : 'Please login with patient credentials'}, status = 400)
-    else:return JsonResponse({'error' : 'Invalid request method'}, status = 405)
+    else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
 
 

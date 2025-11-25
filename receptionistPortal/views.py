@@ -24,3 +24,15 @@ def view_appointments(request):
             return JsonResponse(list(data), safe=False, status  = 200)
         else:return JsonResponse({'error' : 'Please login with receptionist credentials'}, status = 401)
     else:return JsonResponse({'error' : 'Invalid request method'}, status = 405)
+
+def edit_appointments(request):
+    if request.user == 'POST':
+        appointment_id = request.GET.get('id')
+        data = request.POST
+        accepted = data.get('accepted')
+        if accepted:
+            appointment = Appointments.objects.filter(id = appointment_id)
+            if appointment.exists():
+                appointment.update(appointment_status = get_object_or_404(dropDown, 31))
+
+    else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
