@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from authentication.models import *
+from authentication.constants import field_regex
+from authentication.functions import check_regex
 from .models import Appointments
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -28,12 +30,12 @@ def bookAppointment(request):
             reason_to_visit = data.get('reason_to_visit')
             if not data.get('doctor'):
                 return JsonResponse({'error' : 'Please choose a doctor'},status = 400)
-            doctor_detail = get_object_or_404(doctor,data.get('doctor'))
+            doctor_detail = get_object_or_404(doctor, id= data.get('doctor'))
             date = data.get('date')
             time = data.get('time')
-            if not (datetime.datetime.strptime(date, '%Y-%m-%d')  > (datetime.datetime.today() + datetime.timedelta(days = 7))):
-                return JsonResponse({'error' : "Please choose a valid date"},status = 400)
-            if not reason_to_visit:
+            if not (datetime.datetime.strptime(date, '%Y-%m-%d')  >= (datetime.datetime.today() + datetime.timedelta(days = 2))):
+                return JsonResponse({'error' : "Appointment must be scheduled 3 days earlier."},status = 400)
+            if not reason_to_visit or check_regex(reason_to_visit, field_regex):
                 return JsonResponse({'error' : 'Reason to visit is required'}, status = 400)
             appointment, created =  Appointments.objects.get_or_create(
                 appointment_date = date, 

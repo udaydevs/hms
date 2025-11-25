@@ -22,17 +22,25 @@ def view_appointments(request):
                 doctor_name = Concat('doctor__user__first_name', V(" ") ,'doctor__user__last_name', output_field=CharField())
             ).values()
             return JsonResponse(list(data), safe=False, status  = 200)
-        else:return JsonResponse({'error' : 'Please login with receptionist credentials'}, status = 401)
+        else:return JsonResponse({'error' : 'Please login with receptionist credentials'}, status = 403)
     else:return JsonResponse({'error' : 'Invalid request method'}, status = 405)
 
-def edit_appointments(request):
+def update_appointments(request):
     if request.user == 'POST':
         appointment_id = request.GET.get('id')
         data = request.POST
         accepted = data.get('accepted')
-        if accepted:
-            appointment = Appointments.objects.filter(id = appointment_id)
-            if appointment.exists():
+        appointment = Appointments.objects.filter(id = appointment_id)
+        print(appointment)
+        if appointment.exists():    
+            if accepted:
                 appointment.update(appointment_status = get_object_or_404(dropDown, 31))
-
+            if not accepted and data.get('reason_for_cancel'):
+                appointment.update(appointment)
+                data = render_to_string('appointment_booked.html',{'first_name' : request.user.first_name, 'doctor' : appointment[0].doctor.user.first_name})
+                send_mail(
+                    subject='Your appointment has been canceled',from_email= settings.EMAIL_HOST_USER, recipient_list= [request.user],
+                    html_message=data,message='Hello'
+                )
+        else:return JsonResponse({'error' : 'Appointment does not exist'}, status = 400)
     else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)

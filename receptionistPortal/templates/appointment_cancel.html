@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment</title>
+</head>
+<style>
+    body {
+        background-color: whitesmoke;
+        color: black;
+        font-size: large;
+        display: flex;
+        justify-content: center;
+        font-family: "Roboto", sans-serif;
+    }
+
+    main {
+        background: rgba(255, 255, 255, 0.26);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.83);
+        display: flex;
+        max-width: 600px;
+        margin: 20px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    p {
+        margin: 10px 15px 10px 15px;
+        padding: 1px;
+        line-height: 20px;
+    }
+</style>
+<body>
+    <main>
+        <div style="text-align: center;  padding-bottom: 5px; border-bottom: 2px solid black; margin-bottom: 13px;">
+            <h1 style=" font-size: 24px; margin-bottom: 5px;">Appointment Submitted</h1>
+        </div>
+        <div style="padding: 1px;">
+            <p> Hey <span style="font-weight: bold;"> {{first_name}} </span></p>
+            <p>We hope this message finds you well.</p>
+            <p>We are writing to notify you that your scheduled appointment with our Hospital at [{{Date}}, {{Time}}] has been canceled due to {{Reason}}.
+            </p>
+            <p>
+               Sincere apologies for any inconvenience this may have caused to your schedule. <br>
+            </p>
+            <p><b><i>Your health is our priority</i></b></p>
+            <p style="margin-top: 10px;">
+                <strong>
+                Best regards,<br>
+                Our Hospital Team</strong>
+            </p>
+        </div>
+    </main>
+</body>
+
+</html>
