@@ -31,7 +31,6 @@ def update_appointments(request):
         data = request.POST
         accepted = data.get('accepted')
         appointment = Appointments.objects.filter(id = appointment_id)
-        print(appointment)
         if appointment.exists():    
             if accepted:
                 appointment.update(appointment_status = get_object_or_404(dropDown, 31))
