@@ -4,11 +4,12 @@ from django.core.mail import send_mail
 from authentication.models import *
 from authentication.constants import field_regex
 from authentication.functions import check_regex
-from .models import Appointments
+from .models import *
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.db.models import F
+from razorpay import Client
 import json, datetime
 
 patient_id = 25
@@ -18,8 +19,9 @@ def doctors(request):
         doctors_list = doctor.objects.annotate(
             first_name = F('user__first_name'), 
             last_name = F('user__last_name'), 
-            specializations = F('specialization__name')
-        ).values('id', 'first_name', 'last_name', 'specializations')
+            specializations = F('specialization__name'),
+            photo = F('user__profile_photo')
+        ).values('id', 'first_name', 'last_name', 'specializations', 'photo')
         return JsonResponse(list(doctors_list),safe=False, status = 200)
     else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
         
@@ -58,9 +60,23 @@ def bookAppointment(request):
 
     elif request.method == 'GET':
         if request.user.is_authenticated and request.user.role.id == patient_id:
-            appointments_data = Appointments.objects.annotate(status = F('appointment_status__name')).filter(patient__user = request.user.id).values()                
+            appointments_data = Appointments.objects.annotate(status = F('appointment_status__name')).filter(patient__user = request.user.id).values().order_by('-appointment_date')                
             return JsonResponse(list(appointments_data),safe=False, status = 200)
         else:return JsonResponse({'error' : 'Please login with patient credentials'}, status = 400)
     else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
 
 
+def payment(request):
+    if request.method == "GET":
+        # name = request.POST.get("name")
+        # amount = request.POST.get("amount")
+        client = Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        print(client)
+        razorpay_order = client.order.create(
+            {"amount": 1* 100, "currency": "INR", "payment_capture": "1"}
+        )
+        # order = Order.objects.create(
+        #     name=name, amount=amount, provider_order_id=payment_order["id"]
+        # )
+        # order.save()
+        return JsonResponse({'msg' : 'Payment Successfull'}, status = 200)

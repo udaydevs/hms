@@ -4,5 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('doctors/', views.doctors),
-    path('bookAppointment/', views.bookAppointment)
+    path('bookAppointment/', views.bookAppointment),
+    path("payment/", views.payment),
 ]
