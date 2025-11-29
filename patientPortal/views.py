@@ -14,6 +14,7 @@ import json, datetime
 
 patient_id = 25
 
+
 def doctors(request):
     if request.method == 'GET':
         doctors_list = doctor.objects.annotate(
@@ -35,17 +36,24 @@ def bookAppointment(request):
             doctor_detail = get_object_or_404(doctor, id= data.get('doctor'))
             date = data.get('date')
             time = data.get('time')
-            if not (datetime.datetime.strptime(date, '%Y-%m-%d')  >= (datetime.datetime.today() + datetime.timedelta(days = 2))):
-                return JsonResponse({'error' : "Appointment must be scheduled 3 days earlier."},status = 400)
+            starting_range = datetime.datetime.strptime(time,'%H:%M').hour
+            if not ((datetime.datetime.strptime(date, '%Y-%m-%d')  >= (datetime.datetime.today())) and  ((datetime.datetime.strptime(date, '%Y-%m-%d')  <= (datetime.datetime.today() + datetime.timedelta(days = 30))))):
+                return JsonResponse({'error' : "Appointment must be scheduled 2 days earlier."},status = 400)
             if not reason_to_visit or check_regex(reason_to_visit, field_regex):
                 return JsonResponse({'error' : 'Reason to visit is required'}, status = 400)
+            if Appointments.objects.filter(
+                    appointment_date = date, 
+                    doctor = doctor_detail, 
+                    appointment_time__range = (datetime.time( hour=starting_range, minute=0, second=0), datetime.time(hour=starting_range +1, minute= 0 ,second=0))
+                ).exists():
+                return JsonResponse({'error' : f'The slot between {starting_range}:00 - {starting_range + 1}:00 {'PM' if starting_range>12 else 'PM'} is already boooked'}, status = 400)                              
             appointment, created =  Appointments.objects.get_or_create(
                 appointment_date = date, 
                 appointment_time = time, 
                 doctor = doctor_detail, 
-                appointment_status = get_object_or_404(dropDown,id = 30)
             )
             if created:
+                appointment.appointment_status = get_object_or_404(dropDown,id = 30)
                 appointment.patient = patient.objects.get(user = request.user.id)
                 appointment.reason_to_vist = reason_to_visit
                 appointment.save()
@@ -60,11 +68,12 @@ def bookAppointment(request):
 
     elif request.method == 'GET':
         if request.user.is_authenticated and request.user.role.id == patient_id:
-            appointments_data = Appointments.objects.annotate(status = F('appointment_status__name')).filter(patient__user = request.user.id).values().order_by('-appointment_date')                
+            appointments_data = Appointments.objects.annotate(
+                status = F('appointment_status__name')
+            ).filter(patient__user = request.user.id).values().order_by('-appointment_date')                
             return JsonResponse(list(appointments_data),safe=False, status = 200)
         else:return JsonResponse({'error' : 'Please login with patient credentials'}, status = 400)
     else:return JsonResponse({'error' : 'Method not allowed'}, status = 405)
-
 
 def payment(request):
     if request.method == "GET":

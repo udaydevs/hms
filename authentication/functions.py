@@ -8,7 +8,6 @@ def check_regex(regex, value):
     x = re.fullmatch(regex, value)
     return x
 
-
 def prescription_letter(data):
     buffer = BytesIO()  
     p = canvas.Canvas(buffer, pagesize=A4)
@@ -33,6 +32,7 @@ def prescription_letter(data):
     text.textLine(" ")
     text.textLine(f'Diagnosis:___________________________________________________________________')
     text.textLine(" ")
+
     p.drawText(text)
     p.setFillColor(aColor='black')
     p.setFont('Helvetica-Bold',10)
@@ -59,3 +59,7 @@ def prescription_letter(data):
 
     return FileResponse(buffer,as_attachment=True, filename='prescription.pdf')
 
+
+def doc_prescription(data):
+    pass
+    return FileResponse(buffer, as_attachment=True)

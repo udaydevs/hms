@@ -17,11 +17,30 @@ patient_id = 25
 def view_appointments(request):
     if request.method == 'GET':
         if request.user.is_authenticated and request.user.role.id == receptionist_id:
-            data = Appointments.objects.annotate(
-                patient_name =Concat('patient__user__first_name', V(" ") ,'patient__user__last_name', output_field=CharField()),
-                doctor_name = Concat('doctor__user__first_name', V(" ") ,'doctor__user__last_name', output_field=CharField())
+            appointment_data = Appointments.objects.annotate(
+                status = F('appointment_status__name')
             ).values()
-            return JsonResponse(list(data), safe=False, status  = 200)
+
+            patient_data = patient.objects.select_related('user').annotate(
+                first_name = F("user__first_name"),
+                last_name = F('user__last_name'),
+                gender = F('user__gender__name'),
+                D_O_B = F('user__birth_date'),
+                patient_photo = F('user__profile_photo'),
+                blood_group_name = F('blood_group__name')
+            ).values()
+                
+            doctor_data = doctor.objects.annotate(
+                first_name = F("user__first_name"),
+                last_name = F('user__last_name'),
+                gender = F('user__gender__name'),
+                D_O_B = F('user__birth_date'),
+                doctor_photo = F('user__profile_photo'),
+                specialization_name = F('specialization__name'),
+                qualification = F('qualifications__name')
+            ).values()
+            
+            return JsonResponse({'appointment_data' : list(appointment_data), 'patient_data' : list(patient_data), 'doctor_data' : list(doctor_data)}, status  = 200)
         else:return JsonResponse({'error' : 'Please login with receptionist credentials'}, status = 403)
     else:return JsonResponse({'error' : 'Invalid request method'}, status = 405)
 

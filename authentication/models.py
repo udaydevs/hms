@@ -42,7 +42,7 @@ class patient(basemodel):
     medical_history = models.TextField(max_length=200)
 
 class doctor(basemodel):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='doctor_user')
     specialization = models.ForeignKey(dropDown, on_delete=models.CASCADE , related_name='specialization')
     qualifications = models.ForeignKey(dropDown, on_delete=models.CASCADE, related_name='qualifications')
     experience = models.FloatField()

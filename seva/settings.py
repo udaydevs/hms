@@ -143,6 +143,22 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+
+WEASYPRINT_OPTIONS = {
+    'zoom': 1.0,
+    'presentational_hints': True,
+    'optimize_images': False,
+    'jpeg_quality': 85,
+    'dpi': 96,
+    'pdf_version': '1.7',
+    'uncompressed_pdf': True,
+    'attachments': None,
+    'pdf_forms': False,
+    'hinting': False,
+    'cache': None,
+    # Add any other WeasyPrint options you need
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
