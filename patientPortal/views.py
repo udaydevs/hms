@@ -44,7 +44,7 @@ def bookAppointment(request):
             if Appointments.objects.filter(
                     appointment_date = date, 
                     doctor = doctor_detail, 
-                    appointment_time__range = (datetime.time( hour=starting_range, minute=0, second=0), datetime.time(hour=starting_range +1, minute= 0 ,second=0))
+                    appointment_time__range = (datetime.time( hour=starting_range, minute=0, second=0), datetime.time(hour=starting_range, minute= 59 ,second=59))
                 ).exists():
                 return JsonResponse({'error' : f'The slot between {starting_range}:00 - {starting_range + 1}:00 {'PM' if starting_range>12 else 'PM'} is already boooked'}, status = 400)                              
             appointment, created =  Appointments.objects.get_or_create(

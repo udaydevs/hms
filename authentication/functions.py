@@ -60,6 +60,6 @@ def prescription_letter(data):
     return FileResponse(buffer,as_attachment=True, filename='prescription.pdf')
 
 
-def doc_prescription(data):
-    pass
-    return FileResponse(buffer, as_attachment=True)
+# def doc_prescription(data):
+    
+#     return FileResponse(buffer, as_attachment=True)

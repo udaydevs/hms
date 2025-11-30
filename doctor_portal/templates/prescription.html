@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+        }
+
+        @page {
+            font-family: 'Courier New', Courier, monospace;
+            size: A4;
+            margin: 1cm;
+        }
+
+        .heading {
+            display: flex;
+            justify-content: space-between;
+            color: #00C0FF;
+            font-weight: 700;
+            font-size: 50px;
+            padding: 5px;
+            border-bottom: 3px solid #00C0FF;
+        }
+
+        .spec {
+            color: #00C0FF;
+            font-weight: 400;
+            font-size: 23px;
+        }
+
+        img {
+            height: 150px;
+            width: 150px;
+        }
+
+        label {
+            width: fit-content;
+            display: block;
+            
+            margin-bottom: 2mm;
+            font-weight: bold;
+        }
+
+        legend {
+            font-family: "pacifico", serif;
+            font-size: 18pt;
+            margin-bottom: 5mm;
+        }
+
+        input{
+            border: none;
+            display: block;
+            width: 90%;
+            padding-left: 25px;
+            height: 1.5rem;
+        }
+
+        .form-property {
+            display: flex;
+            margin: 2px;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="icon3.png"
+        style="position: absolute; opacity: 0.1; top: 50%; left: 50%; height: 450px;transform: translate(-50%, 50%); width: auto;">
+    <div class="heading">
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+            <p style="margin: 2px;">{{doctor_name}}</p>
+            <p style="margin: 2px;" class="spec">{{specialization}}</p>
+        </div>
+        <div>
+            <img src="icon3.png">
+        </div>
+    </div>
+    <div>
+        <div>
+            <form style="margin-top: 20px;">
+                <div class="form-property" style="width: 70%;padding-top: 3px;">
+                    <label for="name">Name:</label>
+                    <input type="text" value="{{patient_name}}" id="name">
+                    <div class="form-property">
+                        <label for="firstname">Date:</label>
+                        <input type="text" value="{{date}}" style="content: leader(dotted);">
+                    </div>
+                </div>
+                <div class="form-property" style="justify-content: space-between;">
+                    <div class="form-property">
+                        <label for="Phone No" style="margin-right: 5px;">Phone_No:</label>
+                        <input value="{{phone}} " style="margin-left: 25px;">
+                    </div>
+                    <div class="form-property">
+                        <label for="Gender">Gender:</label>
+                        <input value="{{gender}}" style="margin-left: 25px;">
+                    </div>
+                    <div class="form-property">
+                        <label for="Weight">Weight:</label>
+                        <input style="width: 150px;" value="{{weight}}">
+                    </div>
+                </div>
+                <div class="form-property">
+                    <label for="Diagnosis">Diagnosis:</label>
+                    <input value="{{diagnosis}}">
+                </div>
+            </form>
+            <div>
+                <img src="rximage.avif" style="height: 150px; width: 150px; margin-top: 5px;">
+            </div>
+        </div>
+    </div>
+    <div class="footer" style="border-top: #00C0FF solid 3px; margin-right: 1px; height: 25px;">
+        <div style="display: flex; justify-content: space-between;">
+            <div class="spec" style="width: fit-content;">
+                Navo health
+            </div>
+            <div class="spec" style="display: flex; width: auto; align-items: center; ">
+                <div><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="24px"
+                        fill="#00C0FF">
+                        <path
+                            d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+                    </svg></div>
+                <div style="width: 340px;">KIET Group Of Institutions</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
